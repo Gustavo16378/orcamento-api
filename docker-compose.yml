@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   db:
     image: postgres:16
@@ -6,11 +6,23 @@ services:
     environment:
       POSTGRES_DB: orcamento_api
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12243648 # <<<
+      POSTGRES_PASSWORD: 12243648
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: orcamento-api
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/orcamento_api
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12243648
+    ports:
+      - "8080:8080"
 
 volumes:
   pgdata:
