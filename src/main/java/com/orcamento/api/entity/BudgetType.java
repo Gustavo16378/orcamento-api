@@ -48,7 +48,7 @@ public class BudgetType {
     }
 
     public BudgetType(UUID id, String budgetTypeName, String billingMethod, BigDecimal fee,
-            String description, String targetEmail, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+            String description, String targetEmail, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime deletedAt) {
         this.id = id;
         this.budgetTypeName = budgetTypeName;
         this.billingMethod = billingMethod;
@@ -57,12 +57,12 @@ public class BudgetType {
         this.targetEmail = targetEmail;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
     }
 
     public String getBillingMethod() {
         return billingMethod;
     }
-
     public void setBillingMethod(String billingMethod) {
         this.billingMethod = billingMethod;
     }

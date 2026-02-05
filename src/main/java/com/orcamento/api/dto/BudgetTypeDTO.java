@@ -6,9 +6,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-/**
- * DTO para criar, atualizar e retornar tipos de orçamento.
- */
 public class BudgetTypeDTO {
 
     @Schema(description = "ID único do tipo de orçamento", example = "a1b2c3d4-e5f6-7890-1234-567890abcdef")
@@ -45,7 +42,23 @@ public class BudgetTypeDTO {
 
     private OffsetDateTime deletedAt;
 
-    // Getters e Setters
+    public BudgetTypeDTO() {
+    }
+
+    public BudgetTypeDTO(UUID id, String budgetTypeName, String billingMethod, BigDecimal fee,
+            String description, String targetEmail, OffsetDateTime createdAt, OffsetDateTime updatedAt,
+            OffsetDateTime deletedAt) {
+        this.id = id;
+        this.budgetTypeName = budgetTypeName;
+        this.billingMethod = billingMethod;
+        this.fee = fee;
+        this.description = description;
+        this.targetEmail = targetEmail;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+    }
+
     public UUID getId() {
         return id;
     }

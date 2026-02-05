@@ -1,128 +1,146 @@
-# Orçamento API - Sistema de Orçamentos para Traduç��o
+# 📄 Orçamento API – Sistema de Orçamentos para Tradução
 
-API REST com Spring Boot/Java e PostgreSQL para gerenciar orçamentos de tradução (quotes) vinculados a tipos de orçamento (budgets), com suporte a diferentes métodos de cobrança (palavra, página, parágrafo, etc).
-
----
-
-## 🚀 Fluxo do Projeto
-
-1. **Cadastro dos Tipos de Orçamento (`budget-types`)**
-   - Exemplo: "Por Palavra", "Por Página", "Por Parágrafo", "Por Caractere".
-   - Cada type tem seu preço (`fee`), forma de cobrança (`billingMethod`), e-mail alvo (`targetEmail`) etc.
-
-2. **Cliente faz um Orçamento (`quote-requests`)**
-   - Usuário preenche nome, e-mail, anexa documento e escolhe o tipo de orçamento.
-   - API recebe, relaciona ao tipo (`budgetType`) e calcula valor estimado automaticamente.
-
-3. **Fluxo Geral**
-   - Orçamento fica com status `RECEIVED`, esperando análise.
-   - Após análise (manual ou automática), status pode ser alterado para `APPROVED`, `REJECTED`, etc.
+API REST desenvolvida com **Spring Boot/Java 21** e **PostgreSQL**, para gerenciar orçamentos de tradução. Permite criar tipos de orçamento (formas de cobrança) e orçamentos vinculados, com métodos profissionais, soft delete e documentação automática via Swagger/OpenAPI.
 
 ---
 
-## 🧑‍💻 Métodos Disponíveis (CRUD)
+## 🗃️ **Recursos e Funcionalidades**
 
-### Budget Type (`/budget-types`)
-- `GET /budget-types` - Lista todos os tipos disponíveis
-- `POST /budget-types` - Cria novo tipo
-- `PUT /budget-types/{id}` - Atualiza tipo existente
-- `DELETE /budget-types/{id}` - Remove tipo
-  
-### Quote Request (`/quote-requests`)
-- `GET /quote-requests` - Lista todas as cotações
-- `POST /quote-requests` - Cria nova cotação
-- `PUT /quote-requests/{id}` - Atualiza cotação por id
-- `DELETE /quote-requests/{id}` - Exclui cotação
+- **Tipos de Orçamento (`budget-types`)**  
+  Gerencie diferentes formas de cobrança: Palavra, Página, Parágrafo, Caractere.  
+  Cada tipo tem tarifação específica (`fee`), forma de faturamento (`billingMethod`) e e-mail de destino.
 
-*(Todos aceitam/retornam JSON e seguem padrões REST.)*
+- **Solicitações de Orçamento (`quote-requests`)**  
+  Crie cotação, anexe documentos, escolha tipo de orçamento, e a API calcula o valor estimado.
 
----
+- **Soft Delete**  
+  Exclusão lógica preserva o registro para histórico e rastreio.
 
-## ⚙️ Abordagens e Boas Práticas
+- **Endpoints segregados (CRUD + GET Only Deleted):**  
+  - Listar, buscar por ID, criar, atualizar e "deletar" (soft delete)
+  - Consultar itens deletados (`GET /budget-types/deleted`, `GET /quote-requests/deleted`)
 
-- **DTOs**:  
-  - Usados para flexibilizar a entrada/saída (ex: aceitar siglas "W", "PG" além do enum).
-  - Possível evoluir para ResponseDTO para controlar melhor o que retorna.
-- **Entidades com @CreationTimestamp/@UpdateTimestamp**:  
-  - Campos de data (created, updated) automáticos e seguros contra nulos.
-- **Relacionamentos claros**:  
-  - quote_request sempre referencia um budget_type por id (foreign key).
-- **Validação**:  
-  - Boa parte vai pelo próprio banco (`nullable = false`), possíveis melhorias com Bean Validation (não obrigatório inicialmente).
-- **Paginação**:  
-  - Pode ser implementada fácil usando Spring Pageable (`?page=N&size=M`).
+- **Swagger UI**  
+  Documentação automática em `/swagger-ui.html` ou `/swagger-ui/index.html`
+
+- **Validação avançada**  
+  Bean Validation (`@NotBlank`, `@Email`, etc), mensagens customizadas para cada campo.
+
+- **DTOs profissionais**  
+  Flexíveis, aceitam siglas/nomes, sempre retornados nas respostas.
+
+- **Exemplo de relacionamento entre tabelas**  
+  Solicitações (`QuoteRequest`) referenciam tipos (`BudgetType`) via chave estrangeira.
 
 ---
 
-## 🧪 Como testar na máquina
+## 🚀 **Como Rodar Localmente**
 
-1. **Pré-requisitos**  
-   - Java 17+  
-   - Maven  
-   - PostgreSQL  
-   - [Opcional] Postman ou Insomnia (para requisições)
+### **Pré-requisitos**
+- Java 21+
+- Maven
+- Docker e Docker Compose (**recomendado!**)
+- PostgreSQL (usado via Docker já configurado)
 
-2. **Clonar e Rodar**
-   ```bash
-   git clone https://github.com/seu-usuario/seu-projeto.git
-   cd seu-projeto
-   # Configurar application.properties conforme conexão local do Postgres
-   mvn spring-boot:run
-   ```
+### **Clone e Suba o Projeto**
+```bash
+git clone https://github.com/seu-usuario/seu-projeto.git
+cd seu-projeto
+docker compose up --build -d
+```
+> O Docker sobe banco e API já integrados – zero configuração!
 
-3. **Criar tipos de orçamento**
-   - Endpoint: `POST /budget-types`
-   - Body exemplo:
-   ```json
-   {
-     "budgetTypeName": "Por Palavra",
-     "billingMethod": "WORD",
-     "fee": 0.30,
-     "description": "Cobra por palavra traduzida",
-     "targetEmail": "orcamento@empresa.com"
-   }
-   ```
+### **Configuração Manual (sem Docker)**
+Edite o arquivo `src/main/resources/application.properties` com sua conexão local do Postgres:
 
-4. **Criar orçamento**
-   - Endpoint: `POST /quote-requests`
-   - Body exemplo:
-   ```json
-   {
-     "budgetType": { "id": "ID_COPIADO_DO_BUDGET" },
-     "requesterName": "Fulano",
-     "requesterEmail": "fulano@email.com",
-     "documentOriginalName": "txt.pdf",
-     "documentStorageKey": "arquivo-123",
-     "documentMimeType": "application/pdf",
-     "documentSizeBytes": 1024,
-     "billingMethodUsed": "WORD",
-     "feeUsed": 0.30,
-     "countedUnits": 1500,
-     "estimatedTotal": 450.00,
-     "status": "RECEIVED"
-   }
-   ```
-
-5. **Listar e testar outros endpoints**
-   - Basta fazer GET/PUT/DELETE pelos endpoints listados acima.
+```
+spring.datasource.url=jdbc:postgresql://localhost:5432/orcamento_api
+spring.datasource.username=postgres
+spring.datasource.password=SuaSenha
+```
+Depois:
+```bash
+mvn spring-boot:run
+```
 
 ---
 
-## 💡 Dicas
+## 🧑‍💻 **Endpoints Mais Usados**
 
-- **Se aparecer erro de campo nulo (`created_at`)**, confira se anotou as entidades com `@CreationTimestamp`/`@UpdateTimestamp`.
-- **Para exibir os dados completos do budgetType nas respostas dos quotes**, use `FetchType.EAGER` no relacionamento em `QuoteRequest`.
+### **Tipos de Orçamento**
+- `GET /budget-types` — Lista todos ativos
+- `GET /budget-types/deleted` — Lista todos deletados (soft delete)
+- `POST /budget-types` — Cria novo tipo
+- `PUT /budget-types/{id}` — Atualiza tipo existente
+- `DELETE /budget-types/{id}` — Soft delete
+
+### **Solicitações de Orçamento**
+- `GET /quote-requests` — Lista todas ativas
+- `GET /quote-requests/deleted` — Lista deletadas
+- `POST /quote-requests` — Cria nova cotação
+- `PUT /quote-requests/{id}` — Atualiza cotação
+- `DELETE /quote-requests/{id}` — Soft delete
+
+#### **Exemplo JSON: Criar Tipo de Orçamento**
+```json
+{
+  "budgetTypeName": "Por Palavra",
+  "billingMethod": "WORD", // Aceita sigla "W" caso precise
+  "fee": 0.30,
+  "description": "Cobra por palavra traduzida",
+  "targetEmail": "orcamento@empresa.com"
+}
+```
+
+#### **Exemplo JSON: Criar Orçamento**
+```json
+{
+  "budgetTypeId": "ID_COPIADO_DO_BUDGET",
+  "requesterName": "Fulano",
+  "requesterEmail": "fulano@email.com",
+  "documentOriginalName": "txt.pdf",
+  "documentStorageKey": "arquivo-123",
+  "documentMimeType": "application/pdf",
+  "documentSizeBytes": 1024,
+  "billingMethodUsed": "WORD",
+  "feeUsed": 0.30,
+  "countedUnits": 1500,
+  "estimatedTotal": 450.00,
+  "status": "RECEIVED"
+}
+```
 
 ---
 
-## 📌 Sprint/Backlog
-
-- [ ] Implementar paginação (GET paginado)
-- [ ] Melhorar validação de entrada com Bean Validation
-- [ ] Criar testes automáticos (JUnit/MockMvc)
-- [ ] Adicionar autenticação caso necessário
+## 🛡️ **Boas Práticas Implementadas**
+- **DTOs sempre expostos nas respostas**
+- **Validações e tratamento global de erro**
+- **Exclusão lógica (soft delete) em todos os CRUDs**
+- **Documentação automática via Swagger**
+- **Bean Validation com mensagens customizadas**
+- **Fluxo consistente e rastreável dos orçamentos**
 
 ---
 
-Qualquer dúvida, sugestão ou bug, só abrir issue no repo!  
-Bons testes! 🚀
+## 🧪 **Testando**
+Pode testar tudo pelo Swagger (`/swagger-ui.html`), Postman, Insomnia ou qualquer cliente HTTP.
+
+**Dica:**  
+Para ver apenas os deletados, use os endpoints `/budget-types/deleted` ou `/quote-requests/deleted`.
+
+---
+
+## 📌 **Backlog & Melhorias Futuras**
+- [ ] Paginação nos GETs (`?page=N&size=M`)
+- [ ] Teste automático (JUnit/MockMvc)
+- [ ] Autenticação/JWT para rotas protegidas
+- [ ] Melhorar exemplos no Swagger com @Schema
+
+---
+
+## 💬 **Dúvidas? Sugestões?**
+Abra uma issue aqui ou chame no WhatsApp do time!
+
+---
+
+**Bons testes e boas traduções! 🚀**
