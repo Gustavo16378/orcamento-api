@@ -6,8 +6,6 @@ import java.util.UUID;
 import java.util.List;
 
 public interface QuoteRequestRepository extends JpaRepository<QuoteRequest, UUID> {
-
     List<QuoteRequest> findAllByDeletedAtIsNotNull();
-
     List<QuoteRequest> findAllByDeletedAtIsNull();
 }

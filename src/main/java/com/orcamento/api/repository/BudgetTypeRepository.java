@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public interface BudgetTypeRepository extends JpaRepository<BudgetType, UUID> {
     List<BudgetType> findAllByDeletedAtIsNotNull();
-
     List<BudgetType> findAllByDeletedAtIsNull();
 
 }
