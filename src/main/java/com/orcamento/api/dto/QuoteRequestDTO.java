@@ -77,10 +77,9 @@ public class QuoteRequestDTO {
     private OffsetDateTime createdAt;
 
     private OffsetDateTime updatedAt;
-    
+
     private OffsetDateTime deletedAt;
 
-    // Getters and Setters
     public UUID getId() {
         return id;
     }
@@ -208,5 +207,5 @@ public class QuoteRequestDTO {
     public void setDeletedAt(OffsetDateTime deletedAt) {
         this.deletedAt = deletedAt;
     }
-    
+
 }

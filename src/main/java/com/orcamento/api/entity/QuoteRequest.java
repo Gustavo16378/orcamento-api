@@ -41,9 +41,6 @@ public class QuoteRequest {
     @Column(name = "document_size_bytes")
     private Long documentSizeBytes;
 
-    @Column(name = "billing_method", nullable = false)
-    private String billingMethod;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "billing_method_used", nullable = false)
     private BillingMethod billingMethodUsed;
@@ -98,13 +95,6 @@ public class QuoteRequest {
         this.deletedAt = deletedAt;
     }
 
-    public String getBillingMethod() {
-        return billingMethod;
-    }
-
-    public void setBillingMethod(String billingMethod) {
-        this.billingMethod = billingMethod;
-    }
 
     public BillingMethod getBillingMethodUsed() {
         return billingMethodUsed;
