@@ -8,6 +8,8 @@ import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -87,6 +89,21 @@ public class QuoteRequestService {
                 .filter(qr -> qr.getDeletedAt() == null)
                 .map(this::toDTO)
                 .orElseThrow(() -> new RuntimeException("Solicitação não encontrada ou foi deletada."));
+    }
+     /**
+     * Lista todas as quotes não deletadas COM PAGINAÇÃO
+     */
+    public Page<QuoteRequestDTO> getAllPaginated(Pageable pageable) {
+        Page<QuoteRequest> page = quoteRequestRepository.findAllByDeletedAtIsNull(pageable);
+        return page.map(this::toDTO);
+    }
+    
+    /**
+     * Lista todas as quotes deletadas COM PAGINAÇÃO
+     */
+    public Page<QuoteRequestDTO> getAllDeletedPaginated(Pageable pageable) {
+        Page<QuoteRequest> page = quoteRequestRepository.findAllByDeletedAtIsNotNull(pageable);
+        return page.map(this::toDTO);
     }
 
     /*** Criar nova solicitação ***/
