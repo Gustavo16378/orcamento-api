@@ -41,9 +41,8 @@ public class QuoteRequest {
     @Column(name = "document_size_bytes")
     private Long documentSizeBytes;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "billing_method_used", nullable = false)
-    private BillingMethod billingMethodUsed;
+    @Column(name = "billing_method_used", nullable = false, length = 10)
+    private String billingMethodUsed;
 
     @Column(name = "fee_used", nullable = false, precision = 12, scale = 2)
     private BigDecimal feeUsed;
@@ -74,7 +73,7 @@ public class QuoteRequest {
 
     public QuoteRequest(UUID id, BudgetType budgetType, String requesterName, String requesterEmail,
             String documentOriginalName, String documentStorageKey, String documentMimeType, Long documentSizeBytes,
-            BillingMethod billingMethodUsed, BigDecimal feeUsed, Integer countedUnits,
+            String billingMethodUsed, BigDecimal feeUsed, Integer countedUnits,
             BigDecimal estimatedTotal, String status, OffsetDateTime createdAt, OffsetDateTime updatedAt,
             OffsetDateTime deletedAt) {
         this.id = id;
@@ -95,12 +94,11 @@ public class QuoteRequest {
         this.deletedAt = deletedAt;
     }
 
-
-    public BillingMethod getBillingMethodUsed() {
+    public String getBillingMethodUsed() {
         return billingMethodUsed;
     }
 
-    public void setBillingMethodUsed(BillingMethod billingMethodUsed) {
+    public void setBillingMethodUsed(String billingMethodUsed) {
         this.billingMethodUsed = billingMethodUsed;
     }
 

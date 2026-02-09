@@ -17,4 +17,5 @@ public interface QuoteRequestRepository extends JpaRepository<QuoteRequest, UUID
     
     // NOVO: Também pode ter paginação para deletados
     Page<QuoteRequest> findAllByDeletedAtIsNotNull(Pageable pageable);
+
 }
