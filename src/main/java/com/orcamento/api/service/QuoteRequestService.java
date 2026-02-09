@@ -3,7 +3,6 @@ package com.orcamento.api.service;
 import com.orcamento.api.dto.QuoteRequestDTO;
 import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
-import com.orcamento.api.entity.enums.BillingMethod;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class QuoteRequestService {
         dto.setDocumentMimeType(entity.getDocumentMimeType());
         dto.setDocumentSizeBytes(entity.getDocumentSizeBytes());
         if (entity.getBillingMethodUsed() != null) {
-            dto.setBillingMethodUsed(entity.getBillingMethodUsed().name());
+            dto.setBillingMethodUsed(entity.getBillingMethodUsed());
         }
         dto.setFeeUsed(entity.getFeeUsed());
         dto.setCountedUnits(entity.getCountedUnits());
@@ -62,7 +61,7 @@ public class QuoteRequestService {
         entity.setDocumentSizeBytes(dto.getDocumentSizeBytes());
         if (dto.getBillingMethodUsed() != null) {
             // Se precisar parse customizado, adapte aqui!
-            entity.setBillingMethodUsed(BillingMethod.valueOf(dto.getBillingMethodUsed()));
+            entity.setBillingMethodUsed(dto.getBillingMethodUsed());
         }
         entity.setFeeUsed(dto.getFeeUsed());
         entity.setCountedUnits(dto.getCountedUnits());
