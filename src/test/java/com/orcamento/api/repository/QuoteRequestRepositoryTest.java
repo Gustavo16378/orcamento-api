@@ -3,6 +3,7 @@ package com.orcamento.api.repository;
 import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
 import com.orcamento.api.entity.enums.BillingMethod;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.orcamento.api.entity.enums.QuoteStatus;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -207,7 +210,7 @@ class QuoteRequestRepositoryTest {
         quote.setFeeUsed(BigDecimal.valueOf(0.25));
         quote.setCountedUnits(1000);
         quote.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quote.setStatus("PENDING");
+        quote.setStatus(QuoteStatus.PENDING);
         quote.setCreatedAt(OffsetDateTime.now());
         quote.setUpdatedAt(OffsetDateTime.now());
         return quote;

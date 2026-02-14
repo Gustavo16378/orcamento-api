@@ -1,9 +1,8 @@
 package com.orcamento.api.dto;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-public class NotificationEventDTO implements Serializable{
+public class NotificationEventDTO {
     private UUID externalReferenceId;
     private String recipientEmail;
     private String recipientName;

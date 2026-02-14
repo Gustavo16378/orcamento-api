@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import com.orcamento.api.entity.enums.QuoteStatus;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
@@ -69,10 +71,9 @@ public class QuoteRequestDTO {
     @Schema(example = "375.00")
     private BigDecimal estimatedTotal;
 
-    @NotBlank(message = "O status é obrigatório")
-    @Size(max = 30, message = "O status pode ter até 30 caracteres")
-    @Schema(example = "PENDING")
-    private String status;
+    @NotNull(message = "O status é obrigatório")
+    @Schema(example = "RECEIVED")
+    private QuoteStatus status;
 
     private OffsetDateTime createdAt;
 
@@ -176,11 +177,11 @@ public class QuoteRequestDTO {
         this.estimatedTotal = estimatedTotal;
     }
 
-    public String getStatus() {
+    public QuoteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(QuoteStatus status) {
         this.status = status;
     }
 

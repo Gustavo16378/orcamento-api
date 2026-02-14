@@ -9,6 +9,21 @@ BEGIN
   END IF;
 END $$;
 
+-- Cria tipo ENUM para status do orçamento
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'quote_status') THEN
+    CREATE TYPE quote_status AS ENUM (
+      'RECEIVED',
+      'IN_ANALYSIS',
+      'APPROVED',
+      'REJECTED',
+      'CANCELLED'
+    );
+  END IF;
+END $$;
+
+
 -- Tabela de tipos de orçamento (tabela de configuração dos serviços)
 CREATE TABLE IF NOT EXISTS budget_types (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,7 +61,8 @@ CREATE TABLE IF NOT EXISTS quote_requests (
   counted_units integer NOT NULL DEFAULT 0,
   estimated_total numeric(12,2) NOT NULL DEFAULT 0.00,
 
-  status varchar(30) NOT NULL DEFAULT 'RECEIVED',
+  status VARCHAR(30) NOT NULL DEFAULT 'RECEIVED',
+
 
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
