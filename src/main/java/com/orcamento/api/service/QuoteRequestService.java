@@ -4,6 +4,7 @@ import com.orcamento.api.dto.NotificationEventDTO;
 import com.orcamento.api.dto.QuoteRequestDTO;
 import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
+import com.orcamento.api.entity.enums.QuoteStatus;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
 import com.orcamento.api.messaging.NotificationProducerService;
@@ -46,7 +47,7 @@ public class QuoteRequestService {
         dto.setFeeUsed(entity.getFeeUsed());
         dto.setCountedUnits(entity.getCountedUnits());
         dto.setEstimatedTotal(entity.getEstimatedTotal());
-        dto.setStatus(entity.getStatus());
+        dto.setStatus(entity.getStatus().name());
         if (entity.getBudgetType() != null) {
             dto.setBudgetTypeId(entity.getBudgetType().getId());
         }
@@ -72,7 +73,8 @@ public class QuoteRequestService {
         entity.setFeeUsed(dto.getFeeUsed());
         entity.setCountedUnits(dto.getCountedUnits());
         entity.setEstimatedTotal(dto.getEstimatedTotal());
-        entity.setStatus(dto.getStatus());
+        entity.setStatus(QuoteStatus.valueOf(dto.getStatus()));
+
     }
 
     /*** Listar todos (não deletados) ***/

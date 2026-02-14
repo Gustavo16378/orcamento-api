@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   db:
     image: postgres:16
@@ -33,10 +34,10 @@ services:
       - db
       - rabbitmq
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/orcamento_api
+      SPRING_DATASOURCE_URL: jdbc:postgresql://orcamento-db:5432/orcamento_api
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 12243648
-      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_HOST: orcamento-rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
@@ -50,4 +51,4 @@ volumes:
 
 networks:
   ms-shared:
-    driver: bridge
+    external: true

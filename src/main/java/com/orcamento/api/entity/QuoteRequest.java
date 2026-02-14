@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
 import com.orcamento.api.entity.enums.BillingMethod;
+import com.orcamento.api.entity.enums.QuoteStatus;
 
 @Entity
 @Table(name = "quote_requests")
@@ -53,8 +54,9 @@ public class QuoteRequest {
     @Column(name = "estimated_total", nullable = false, precision = 12, scale = 2)
     private BigDecimal estimatedTotal;
 
-    @Column(name = "status", nullable = false, length = 30)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, columnDefinition = "quote_status")
+    private QuoteStatus status;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -74,7 +76,7 @@ public class QuoteRequest {
     public QuoteRequest(UUID id, BudgetType budgetType, String requesterName, String requesterEmail,
             String documentOriginalName, String documentStorageKey, String documentMimeType, Long documentSizeBytes,
             String billingMethodUsed, BigDecimal feeUsed, Integer countedUnits,
-            BigDecimal estimatedTotal, String status, OffsetDateTime createdAt, OffsetDateTime updatedAt,
+            BigDecimal estimatedTotal, QuoteStatus status, OffsetDateTime createdAt, OffsetDateTime updatedAt,
             OffsetDateTime deletedAt) {
         this.id = id;
         this.budgetType = budgetType;
@@ -174,11 +176,11 @@ public class QuoteRequest {
         this.feeUsed = feeUsed;
     }
 
-    public String getStatus() {
+    public QuoteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(QuoteStatus status) {
         this.status = status;
     }
 
