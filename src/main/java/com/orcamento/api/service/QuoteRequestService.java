@@ -47,7 +47,7 @@ public class QuoteRequestService {
         dto.setFeeUsed(entity.getFeeUsed());
         dto.setCountedUnits(entity.getCountedUnits());
         dto.setEstimatedTotal(entity.getEstimatedTotal());
-        dto.setStatus(entity.getStatus().name());
+        dto.setStatus(entity.getStatus());
         if (entity.getBudgetType() != null) {
             dto.setBudgetTypeId(entity.getBudgetType().getId());
         }
@@ -73,7 +73,7 @@ public class QuoteRequestService {
         entity.setFeeUsed(dto.getFeeUsed());
         entity.setCountedUnits(dto.getCountedUnits());
         entity.setEstimatedTotal(dto.getEstimatedTotal());
-        entity.setStatus(QuoteStatus.valueOf(dto.getStatus()));
+        entity.setStatus(dto.getStatus());
 
     }
 

@@ -3,6 +3,7 @@ package com.orcamento.api.service;
 import com.orcamento.api.dto.QuoteRequestDTO;
 import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
+import com.orcamento.api.entity.enums.QuoteStatus;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
 
@@ -30,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.orcamento.api.extension.MemoryMonitorExtension;
+import com.orcamento.api.entity.enums.QuoteStatus;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(MemoryMonitorExtension.class)
@@ -82,7 +84,7 @@ class QuoteRequestServiceTest {
         quoteRequest.setFeeUsed(BigDecimal.valueOf(0.25));
         quoteRequest.setCountedUnits(1000);
         quoteRequest.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quoteRequest.setStatus("PENDING");
+        quoteRequest.setStatus(QuoteStatus.RECEIVED);
         quoteRequest.setCreatedAt(OffsetDateTime.now());
         quoteRequest.setUpdatedAt(OffsetDateTime.now());
 
@@ -99,7 +101,7 @@ class QuoteRequestServiceTest {
         quoteRequestDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         quoteRequestDTO.setCountedUnits(1000);
         quoteRequestDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quoteRequestDTO.setStatus("PENDING");
+        quoteRequestDTO.setStatus(QuoteStatus.RECEIVED);
     }
 
     @Test
@@ -116,7 +118,7 @@ class QuoteRequestServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getRequesterName()).isEqualTo("João Silva");
         assertThat(result.getRequesterEmail()).isEqualTo("joao@email.com");
-        
+        assertThat(result.getStatus()).isEqualTo(QuoteStatus.RECEIVED);
         verify(budgetTypeRepository, times(1)).findById(budgetTypeId);
         verify(quoteRequestRepository, times(1)).save(any(QuoteRequest.class));
     }
@@ -203,7 +205,7 @@ class QuoteRequestServiceTest {
         updateDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         updateDTO.setCountedUnits(1000);
         updateDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        updateDTO.setStatus("APPROVED");
+        updateDTO.setStatus(QuoteStatus.RECEIVED);
 
         when(quoteRequestRepository.findById(quoteRequestId)).thenReturn(Optional.of(quoteRequest));
         when(budgetTypeRepository.findById(budgetTypeId)).thenReturn(Optional.of(budgetType));

@@ -3,6 +3,7 @@ package com.orcamento.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orcamento.api.dto.QuoteRequestDTO;
 import com.orcamento.api.service.QuoteRequestService;
+import com.orcamento.api.entity.enums.QuoteStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class QuoteRequestControllerTest {
         quoteRequestDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         quoteRequestDTO.setCountedUnits(1000);
         quoteRequestDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quoteRequestDTO.setStatus("PENDING");
+        quoteRequestDTO.setStatus(QuoteStatus.RECEIVED);
         quoteRequestDTO.setCreatedAt(OffsetDateTime.now());
         quoteRequestDTO.setUpdatedAt(OffsetDateTime.now());
     }
@@ -180,7 +181,7 @@ class QuoteRequestControllerTest {
         inputDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         inputDTO.setCountedUnits(500);
         inputDTO.setEstimatedTotal(BigDecimal.valueOf(125.0));
-        inputDTO.setStatus("PENDING");
+        inputDTO.setStatus(QuoteStatus.RECEIVED);
 
         QuoteRequestDTO createdDTO = new QuoteRequestDTO();
         createdDTO.setId(UUID.randomUUID());
@@ -195,7 +196,7 @@ class QuoteRequestControllerTest {
         createdDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         createdDTO.setCountedUnits(500);
         createdDTO.setEstimatedTotal(BigDecimal.valueOf(125.0));
-        createdDTO.setStatus("PENDING");
+        createdDTO.setStatus(QuoteStatus.RECEIVED);
 
         when(service.create(any(QuoteRequestDTO.class))).thenReturn(createdDTO);
 
@@ -243,7 +244,7 @@ class QuoteRequestControllerTest {
         updateDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         updateDTO.setCountedUnits(1000);
         updateDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        updateDTO.setStatus("APPROVED");
+        updateDTO.setStatus(QuoteStatus.RECEIVED);
 
         QuoteRequestDTO updatedDTO = new QuoteRequestDTO();
         updatedDTO.setId(quoteRequestId);
@@ -258,7 +259,7 @@ class QuoteRequestControllerTest {
         updatedDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         updatedDTO.setCountedUnits(1000);
         updatedDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        updatedDTO.setStatus("APPROVED");
+        updatedDTO.setStatus(QuoteStatus.RECEIVED);
 
         when(service.update(eq(quoteRequestId), any(QuoteRequestDTO.class))).thenReturn(updatedDTO);
 
@@ -268,7 +269,7 @@ class QuoteRequestControllerTest {
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.requesterName", is("João Silva Atualizado")))
-                .andExpect(jsonPath("$.status", is("APPROVED")));
+                .andExpect(jsonPath("$.status", is("RECEIVED")));
 
         verify(service, times(1)).update(eq(quoteRequestId), any(QuoteRequestDTO.class));
     }
