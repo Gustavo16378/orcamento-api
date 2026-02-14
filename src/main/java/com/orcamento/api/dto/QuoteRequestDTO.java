@@ -71,8 +71,7 @@ public class QuoteRequestDTO {
     @Schema(example = "375.00")
     private BigDecimal estimatedTotal;
 
-    @NotBlank(message = "O status é obrigatório")
-    @Size(max = 30, message = "O status pode ter até 30 caracteres")
+    @NotNull(message = "O status é obrigatório")
     @Schema(example = "RECEIVED")
     private QuoteStatus status;
 

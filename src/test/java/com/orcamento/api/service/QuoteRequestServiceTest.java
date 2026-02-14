@@ -84,7 +84,7 @@ class QuoteRequestServiceTest {
         quoteRequest.setFeeUsed(BigDecimal.valueOf(0.25));
         quoteRequest.setCountedUnits(1000);
         quoteRequest.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quoteRequest.setStatus(QuoteStatus.RECEIVED);
+        quoteRequest.setStatus(QuoteStatus.PENDING);
         quoteRequest.setCreatedAt(OffsetDateTime.now());
         quoteRequest.setUpdatedAt(OffsetDateTime.now());
 
@@ -101,7 +101,7 @@ class QuoteRequestServiceTest {
         quoteRequestDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         quoteRequestDTO.setCountedUnits(1000);
         quoteRequestDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quoteRequestDTO.setStatus(QuoteStatus.RECEIVED);
+        quoteRequestDTO.setStatus(QuoteStatus.PENDING);
     }
 
     @Test
@@ -118,7 +118,7 @@ class QuoteRequestServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getRequesterName()).isEqualTo("João Silva");
         assertThat(result.getRequesterEmail()).isEqualTo("joao@email.com");
-        assertThat(result.getStatus()).isEqualTo(QuoteStatus.RECEIVED);
+        assertThat(result.getStatus()).isEqualTo(QuoteStatus.PENDING);
         verify(budgetTypeRepository, times(1)).findById(budgetTypeId);
         verify(quoteRequestRepository, times(1)).save(any(QuoteRequest.class));
     }
@@ -150,6 +150,7 @@ class QuoteRequestServiceTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getRequesterName()).isEqualTo("João Silva");
+        assertThat(result.getStatus()).isEqualTo(QuoteStatus.PENDING);
         
         verify(quoteRequestRepository, times(1)).findById(quoteRequestId);
     }
@@ -205,7 +206,7 @@ class QuoteRequestServiceTest {
         updateDTO.setFeeUsed(BigDecimal.valueOf(0.25));
         updateDTO.setCountedUnits(1000);
         updateDTO.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        updateDTO.setStatus(QuoteStatus.RECEIVED);
+        updateDTO.setStatus(QuoteStatus.PENDING);
 
         when(quoteRequestRepository.findById(quoteRequestId)).thenReturn(Optional.of(quoteRequest));
         when(budgetTypeRepository.findById(budgetTypeId)).thenReturn(Optional.of(budgetType));

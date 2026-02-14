@@ -7,6 +7,7 @@ import com.orcamento.api.entity.QuoteRequest;
 import com.orcamento.api.entity.enums.QuoteStatus;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
+import com.orcamento.api.util.TemplateUtils;
 import com.orcamento.api.messaging.NotificationProducerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -117,8 +119,7 @@ public class QuoteRequestService {
     public QuoteRequestDTO create(QuoteRequestDTO dto) {
         BudgetType budgetType = budgetTypeRepository.findById(dto.getBudgetTypeId())
                 .orElseThrow(() -> new RuntimeException(
-                        "Tipo de orçamento com ID " + dto.getBudgetTypeId() + " não encontrado.")
-                );
+                        "Tipo de orçamento com ID " + dto.getBudgetTypeId() + " não encontrado."));
         QuoteRequest entity = new QuoteRequest();
         mapDtoToEntity(dto, entity, budgetType);
         entity.setId(UUID.randomUUID());
@@ -129,16 +130,28 @@ public class QuoteRequestService {
         QuoteRequest saved = quoteRequestRepository.save(entity);
         QuoteRequestDTO savedDTO = toDTO(saved);
 
-        // ---------- ENVIA AUTOMATICAMENTE PARA O RABBITMQ -----------
+        // Monta o BODY HTML via template externo DO CLASSPATH!
+        String templateHtml;
+        String bodyHtml;
+        try {
+            templateHtml = TemplateUtils.loadTemplateFromClasspath("templates/orcamento_criado.html");
+            bodyHtml = TemplateUtils.processTemplate(
+                    templateHtml,
+                    savedDTO.getRequesterName(),
+                    budgetType.getBudgetTypeName(),
+                    savedDTO.getId().toString());
+        } catch (IOException e) {
+            // Fallback em caso de erro – recomenda-se logar o erro!
+            bodyHtml = "<h1>Olá, " + savedDTO.getRequesterName() + "!</h1><p>Seu orçamento foi criado com sucesso!</p>";
+        }
+
         NotificationEventDTO event = new NotificationEventDTO(
-            savedDTO.getId(),
-            savedDTO.getRequesterEmail(),
-            savedDTO.getRequesterName(),
-            "Seu orçamento foi criado!",
-            "<h1>Olá, " + savedDTO.getRequesterName() + "!</h1><p>Seu orçamento foi criado com sucesso!</p>"
-        );
-        notificationProducerService.sendNotification(event); // <--- AQUI ESTÁ A MAGIA!
-        // ------------------------------------------------------------
+                savedDTO.getId(),
+                savedDTO.getRequesterEmail(),
+                savedDTO.getRequesterName(),
+                "Seu orçamento foi criado!",
+                bodyHtml);
+        notificationProducerService.sendNotification(event);
 
         return savedDTO;
     }
@@ -149,7 +162,8 @@ public class QuoteRequestService {
                 .filter(qr -> qr.getDeletedAt() == null)
                 .orElseThrow(() -> new RuntimeException("Solicitação não encontrada ou foi deletada."));
         BudgetType budgetType = budgetTypeRepository.findById(dto.getBudgetTypeId())
-                .orElseThrow(() -> new RuntimeException("Tipo de orçamento com ID " + dto.getBudgetTypeId() + " não encontrado."));
+                .orElseThrow(() -> new RuntimeException(
+                        "Tipo de orçamento com ID " + dto.getBudgetTypeId() + " não encontrado."));
         mapDtoToEntity(dto, entity, budgetType);
         entity.setUpdatedAt(OffsetDateTime.now());
         QuoteRequest updated = quoteRequestRepository.save(entity);

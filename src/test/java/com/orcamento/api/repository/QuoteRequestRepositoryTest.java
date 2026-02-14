@@ -210,7 +210,7 @@ class QuoteRequestRepositoryTest {
         quote.setFeeUsed(BigDecimal.valueOf(0.25));
         quote.setCountedUnits(1000);
         quote.setEstimatedTotal(BigDecimal.valueOf(250.0));
-        quote.setStatus(QuoteStatus.RECEIVED);
+        quote.setStatus(QuoteStatus.PENDING);
         quote.setCreatedAt(OffsetDateTime.now());
         quote.setUpdatedAt(OffsetDateTime.now());
         return quote;

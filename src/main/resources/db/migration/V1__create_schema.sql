@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS quote_requests (
   counted_units integer NOT NULL DEFAULT 0,
   estimated_total numeric(12,2) NOT NULL DEFAULT 0.00,
 
-  status quote_status NOT NULL DEFAULT 'RECEIVED',
+  status VARCHAR(30) NOT NULL DEFAULT 'RECEIVED',
 
 
   created_at timestamptz NOT NULL DEFAULT now(),
