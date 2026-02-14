@@ -66,6 +66,7 @@ public class QuoteRequestService {
         entity.setDocumentMimeType(dto.getDocumentMimeType());
         entity.setDocumentSizeBytes(dto.getDocumentSizeBytes());
         if (dto.getBillingMethodUsed() != null) {
+            // Se precisar parse customizado, adapte aqui!
             entity.setBillingMethodUsed(dto.getBillingMethodUsed());
         }
         entity.setFeeUsed(dto.getFeeUsed());

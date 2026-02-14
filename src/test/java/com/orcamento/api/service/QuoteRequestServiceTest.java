@@ -33,6 +33,7 @@ import com.orcamento.api.extension.MemoryMonitorExtension;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(MemoryMonitorExtension.class)
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Testes do QuoteRequestService")
 class QuoteRequestServiceTest {
 
