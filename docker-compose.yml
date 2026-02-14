@@ -10,19 +10,44 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata-orcamento:/var/lib/postgresql/data
+    networks:
+      - ms-shared
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: orcamento-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - ms-shared
 
   api:
     build: .
     container_name: orcamento-api
     depends_on:
       - db
+      - rabbitmq
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/orcamento_api
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 12243648
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
     ports:
       - "8080:8080"
+    networks:
+      - ms-shared
 
 volumes:
-  pgdata:
+  pgdata-orcamento:
+
+networks:
+  ms-shared:
+    driver: bridge

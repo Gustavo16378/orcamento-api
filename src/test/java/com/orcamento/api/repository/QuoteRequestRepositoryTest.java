@@ -38,6 +38,9 @@ class QuoteRequestRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        quoteRequestRepository.deleteAll();
+        budgetTypeRepository.deleteAll();
+
         // Limpa o banco antes de cada teste
         quoteRequestRepository.deleteAll();
         budgetTypeRepository.deleteAll();
