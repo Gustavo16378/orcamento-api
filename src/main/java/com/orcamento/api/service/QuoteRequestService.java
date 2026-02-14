@@ -1,10 +1,13 @@
 package com.orcamento.api.service;
 
+import com.orcamento.api.dto.NotificationEventDTO;
 import com.orcamento.api.dto.QuoteRequestDTO;
 import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
+import com.orcamento.api.messaging.NotificationProducerService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,9 @@ public class QuoteRequestService {
 
     @Autowired
     private BudgetTypeRepository budgetTypeRepository;
+
+    @Autowired
+    private NotificationProducerService notificationProducerService; // <--- AQUI!
 
     // Conversão Entity -> DTO
     private QuoteRequestDTO toDTO(QuoteRequest entity) {
@@ -60,14 +66,12 @@ public class QuoteRequestService {
         entity.setDocumentMimeType(dto.getDocumentMimeType());
         entity.setDocumentSizeBytes(dto.getDocumentSizeBytes());
         if (dto.getBillingMethodUsed() != null) {
-            // Se precisar parse customizado, adapte aqui!
             entity.setBillingMethodUsed(dto.getBillingMethodUsed());
         }
         entity.setFeeUsed(dto.getFeeUsed());
         entity.setCountedUnits(dto.getCountedUnits());
         entity.setEstimatedTotal(dto.getEstimatedTotal());
         entity.setStatus(dto.getStatus());
-        // createdAt/updatedAt tratados ao salvar
     }
 
     /*** Listar todos (não deletados) ***/
@@ -89,14 +93,15 @@ public class QuoteRequestService {
                 .map(this::toDTO)
                 .orElseThrow(() -> new RuntimeException("Solicitação não encontrada ou foi deletada."));
     }
-     /**
+
+    /**
      * Lista todas as quotes não deletadas COM PAGINAÇÃO
      */
     public Page<QuoteRequestDTO> getAllPaginated(Pageable pageable) {
         Page<QuoteRequest> page = quoteRequestRepository.findAllByDeletedAtIsNull(pageable);
         return page.map(this::toDTO);
     }
-    
+
     /**
      * Lista todas as quotes deletadas COM PAGINAÇÃO
      */
@@ -119,7 +124,20 @@ public class QuoteRequestService {
         entity.setDeletedAt(null);
 
         QuoteRequest saved = quoteRequestRepository.save(entity);
-        return toDTO(saved);
+        QuoteRequestDTO savedDTO = toDTO(saved);
+
+        // ---------- ENVIA AUTOMATICAMENTE PARA O RABBITMQ -----------
+        NotificationEventDTO event = new NotificationEventDTO(
+            savedDTO.getId(),
+            savedDTO.getRequesterEmail(),
+            savedDTO.getRequesterName(),
+            "Seu orçamento foi criado!",
+            "<h1>Olá, " + savedDTO.getRequesterName() + "!</h1><p>Seu orçamento foi criado com sucesso!</p>"
+        );
+        notificationProducerService.sendNotification(event); // <--- AQUI ESTÁ A MAGIA!
+        // ------------------------------------------------------------
+
+        return savedDTO;
     }
 
     /*** Atualizar solicitação ***/
@@ -131,7 +149,6 @@ public class QuoteRequestService {
                 .orElseThrow(() -> new RuntimeException("Tipo de orçamento com ID " + dto.getBudgetTypeId() + " não encontrado."));
         mapDtoToEntity(dto, entity, budgetType);
         entity.setUpdatedAt(OffsetDateTime.now());
-        // Não atualizar createdAt
         QuoteRequest updated = quoteRequestRepository.save(entity);
         return toDTO(updated);
     }

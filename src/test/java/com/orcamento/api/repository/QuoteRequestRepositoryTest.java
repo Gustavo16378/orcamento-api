@@ -38,11 +38,9 @@ class QuoteRequestRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        // Limpa o banco antes de cada teste
         quoteRequestRepository.deleteAll();
         budgetTypeRepository.deleteAll();
 
-        // Cria um BudgetType para usar nos testes
         budgetType = new BudgetType();
         budgetType.setId(UUID.randomUUID());
         budgetType.setBudgetTypeName("Tradução por Palavra");
@@ -188,7 +186,6 @@ class QuoteRequestRepositoryTest {
         assertThat(result).isEmpty();
     }
 
-    // ===== MÉTODO AUXILIAR =====
 
     private QuoteRequest criarQuoteRequest(String nome, String email) {
         QuoteRequest quote = new QuoteRequest();

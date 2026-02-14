@@ -5,6 +5,7 @@ import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.orcamento.api.extension.MemoryMonitorExtension;
+
 @ExtendWith(MockitoExtension.class)
+@ExtendWith(MemoryMonitorExtension.class)
 @DisplayName("Testes do QuoteRequestService")
 class QuoteRequestServiceTest {
 
