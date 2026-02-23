@@ -4,6 +4,7 @@ import com.orcamento.api.dto.QuoteRequestDTO;
 import com.orcamento.api.entity.BudgetType;
 import com.orcamento.api.entity.QuoteRequest;
 import com.orcamento.api.entity.enums.QuoteStatus;
+import com.orcamento.api.entity.enums.BillingMethod;
 import com.orcamento.api.repository.BudgetTypeRepository;
 import com.orcamento.api.repository.QuoteRequestRepository;
 
@@ -63,7 +64,7 @@ class QuoteRequestServiceTest {
         budgetType = new BudgetType();
         budgetType.setId(budgetTypeId);
         budgetType.setBudgetTypeName("Tradução por Palavra");
-        budgetType.setBillingMethod("WORD");
+        budgetType.setBillingMethod(BillingMethod.WORD);
         budgetType.setFee(BigDecimal.valueOf(0.25));
         budgetType.setDescription("Teste");
         budgetType.setTargetEmail("teste@email.com");

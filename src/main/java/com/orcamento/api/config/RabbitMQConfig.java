@@ -6,7 +6,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 
 @Configuration
-public class RabbitMQConfig {
+public class RabbitMQConfig  {
 
     @Bean
     public MessageConverter jsonMessageConverter() {

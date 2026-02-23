@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.orcamento.api.entity.enums.BillingMethod;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -44,7 +45,7 @@ class BudgetTypeServiceTest {
         budgetType = new BudgetType();
         budgetType.setId(budgetTypeId);
         budgetType.setBudgetTypeName("Tradução Juramentada");
-        budgetType.setBillingMethod("WORD");
+        budgetType.setBillingMethod(BillingMethod.WORD);
         budgetType.setFee(BigDecimal.valueOf(0.30));
         budgetType.setDescription("Tradução oficial");
         budgetType.setTargetEmail("contato@empresa.com");
@@ -55,7 +56,7 @@ class BudgetTypeServiceTest {
         // Cria DTO
         budgetTypeDTO = new BudgetTypeDTO();
         budgetTypeDTO.setBudgetTypeName("Tradução Juramentada");
-        budgetTypeDTO.setBillingMethod("WORD");
+        budgetTypeDTO.setBillingMethod(BillingMethod.WORD);
         budgetTypeDTO.setFee(BigDecimal.valueOf(0.30));
         budgetTypeDTO.setDescription("Tradução oficial");
         budgetTypeDTO.setTargetEmail("contato@empresa.com");
@@ -73,7 +74,7 @@ class BudgetTypeServiceTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getBudgetTypeName()).isEqualTo("Tradução Juramentada");
-        assertThat(result.getBillingMethod()).isEqualTo("WORD");
+        assertThat(result.getBillingMethod()).isEqualTo(BillingMethod.WORD);
         assertThat(result.getFee()).isEqualByComparingTo(BigDecimal.valueOf(0.30));
         
         verify(budgetTypeRepository, times(1)).save(any(BudgetType.class));
@@ -132,7 +133,7 @@ class BudgetTypeServiceTest {
         BudgetType budgetType2 = new BudgetType();
         budgetType2.setId(UUID.randomUUID());
         budgetType2.setBudgetTypeName("Tradução Técnica");
-        budgetType2.setBillingMethod("PAGE");
+        budgetType2.setBillingMethod(BillingMethod.PAGE);
         budgetType2.setFee(BigDecimal.valueOf(15.0));
         budgetType2.setDescription("Tradução técnica");
         budgetType2.setTargetEmail("tecnica@empresa.com");
@@ -192,7 +193,7 @@ class BudgetTypeServiceTest {
         // Given
         BudgetTypeDTO updateDTO = new BudgetTypeDTO();
         updateDTO.setBudgetTypeName("Tradução Juramentada Atualizada");
-        updateDTO.setBillingMethod("PAGE");
+        updateDTO.setBillingMethod(BillingMethod.PAGE);
         updateDTO.setFee(BigDecimal.valueOf(20.0));
         updateDTO.setDescription("Nova descrição");
         updateDTO.setTargetEmail("novo@empresa.com");

@@ -14,11 +14,9 @@ DO $$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'quote_status') THEN
     CREATE TYPE quote_status AS ENUM (
-      'RECEIVED',
-      'IN_ANALYSIS',
-      'APPROVED',
-      'REJECTED',
-      'CANCELLED'
+      'PENDING',
+      'FAILED',
+      'SENT'
     );
   END IF;
 END $$;
@@ -28,7 +26,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS budget_types (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   budget_type_name varchar(100) NOT NULL,
-  billing_method varchar(10) NOT NULL,
+  billing_method VARCHAR(30) NOT NULL,
   fee numeric(12,2) NOT NULL DEFAULT 0.00,
   description text NULL,
   target_email varchar(254) NOT NULL,
@@ -54,14 +52,14 @@ CREATE TABLE IF NOT EXISTS quote_requests (
   document_size_bytes bigint NULL,
 
   -- APENAS UM CAMPO PARA BILLING METHOD:
-  billing_method_used varchar(10) NOT NULL DEFAULT 'WORD',
+  billing_method_used VARCHAR(30) NOT NULL DEFAULT 'WORD',
 
   fee_used numeric(12,2) NOT NULL DEFAULT 0.00,
 
   counted_units integer NOT NULL DEFAULT 0,
   estimated_total numeric(12,2) NOT NULL DEFAULT 0.00,
 
-  status VARCHAR(30) NOT NULL DEFAULT 'RECEIVED',
+  status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
 
 
   created_at timestamptz NOT NULL DEFAULT now(),
