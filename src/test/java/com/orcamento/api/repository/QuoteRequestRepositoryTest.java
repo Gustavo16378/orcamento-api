@@ -52,7 +52,7 @@ class QuoteRequestRepositoryTest {
         budgetType = new BudgetType();
         budgetType.setId(UUID.randomUUID());
         budgetType.setBudgetTypeName("Tradução por Palavra");
-        budgetType.setBillingMethod("WORD");
+        budgetType.setBillingMethod(BillingMethod.WORD);
         budgetType.setFee(BigDecimal.valueOf(0.25));
         budgetType.setDescription("Teste");
         budgetType.setTargetEmail("teste@email.com");

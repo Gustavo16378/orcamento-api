@@ -1,6 +1,7 @@
 package com.orcamento.api.repository;
 
 import com.orcamento.api.entity.BudgetType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.orcamento.api.entity.enums.BillingMethod;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -32,7 +35,7 @@ class BudgetTypeRepositoryTest {
     @DisplayName("Deve salvar um BudgetType no banco")
     void deveSalvarBudgetType() {
         // Given
-        BudgetType budgetType = criarBudgetType("Tradução Juramentada", "WORD", 0.30);
+        BudgetType budgetType = criarBudgetType("Tradução Juramentada", BillingMethod.WORD, 0.30);
 
         // When
         BudgetType saved = budgetTypeRepository.save(budgetType);
@@ -40,7 +43,7 @@ class BudgetTypeRepositoryTest {
         // Then
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getBudgetTypeName()).isEqualTo("Tradução Juramentada");
-        assertThat(saved.getBillingMethod()).isEqualTo("WORD");
+        assertThat(saved.getBillingMethod()).isEqualTo(BillingMethod.WORD);
         assertThat(saved.getFee()).isEqualByComparingTo(BigDecimal.valueOf(0.30));
     }
 
@@ -48,9 +51,9 @@ class BudgetTypeRepositoryTest {
     @DisplayName("Deve buscar apenas BudgetTypes não deletados")
     void deveBuscarApenasNaoDeletados() {
         // Given
-        BudgetType type1 = criarBudgetType("Tipo 1", "WORD", 0.25);
-        BudgetType type2 = criarBudgetType("Tipo 2", "PAGE", 10.0);
-        BudgetType type3 = criarBudgetType("Tipo 3", "PARAGRAPH", 5.0);
+        BudgetType type1 = criarBudgetType("Tipo 1", BillingMethod.WORD, 0.25);
+        BudgetType type2 = criarBudgetType("Tipo 2", BillingMethod.PAGE, 10.0);
+        BudgetType type3 = criarBudgetType("Tipo 3", BillingMethod.PARAGRAPH, 5.0);
         
         budgetTypeRepository.save(type1);
         budgetTypeRepository.save(type2);
@@ -71,9 +74,9 @@ class BudgetTypeRepositoryTest {
     @DisplayName("Deve buscar apenas BudgetTypes deletados")
     void deveBuscarApenasDeletados() {
         // Given
-        BudgetType type1 = criarBudgetType("Ativo", "WORD", 0.25);
-        BudgetType type2 = criarBudgetType("Deletado 1", "PAGE", 10.0);
-        BudgetType type3 = criarBudgetType("Deletado 2", "CHARACTER", 0.05);
+        BudgetType type1 = criarBudgetType("Ativo", BillingMethod.WORD, 0.25);
+        BudgetType type2 = criarBudgetType("Deletado 1", BillingMethod.PAGE, 10.0);
+        BudgetType type3 = criarBudgetType("Deletado 2", BillingMethod.CHARACTER, 0.05);
         
         budgetTypeRepository.save(type1);
         type2.setDeletedAt(OffsetDateTime.now());
@@ -95,7 +98,7 @@ class BudgetTypeRepositoryTest {
     @DisplayName("Deve buscar BudgetType por ID")
     void deveBuscarPorId() {
         // Given
-        BudgetType budgetType = criarBudgetType("Tradução Técnica", "PAGE", 15.0);
+        BudgetType budgetType = criarBudgetType("Tradução Técnica", BillingMethod.PAGE, 15.0);
         BudgetType saved = budgetTypeRepository.save(budgetType);
 
         // When
@@ -134,7 +137,7 @@ class BudgetTypeRepositoryTest {
     @DisplayName("Deve atualizar BudgetType existente")
     void deveAtualizarBudgetType() {
         // Given
-        BudgetType budgetType = criarBudgetType("Nome Antigo", "WORD", 0.20);
+        BudgetType budgetType = criarBudgetType("Nome Antigo", BillingMethod.WORD, 0.20);
         BudgetType saved = budgetTypeRepository.save(budgetType);
 
         // When
@@ -150,7 +153,7 @@ class BudgetTypeRepositoryTest {
     }
 
 
-    private BudgetType criarBudgetType(String nome, String method, double fee) {
+    private BudgetType criarBudgetType(String nome, BillingMethod method, double fee) {
         BudgetType budgetType = new BudgetType();
         budgetType.setId(UUID.randomUUID());
         budgetType.setBudgetTypeName(nome);

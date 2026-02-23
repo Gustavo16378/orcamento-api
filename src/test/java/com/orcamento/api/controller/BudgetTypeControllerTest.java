@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import com.orcamento.api.entity.enums.BillingMethod;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -47,7 +48,7 @@ class BudgetTypeControllerTest {
         budgetTypeDTO = new BudgetTypeDTO();
         budgetTypeDTO.setId(budgetTypeId);
         budgetTypeDTO.setBudgetTypeName("Tradução Juramentada");
-        budgetTypeDTO.setBillingMethod("WORD");
+        budgetTypeDTO.setBillingMethod(BillingMethod.WORD);
         budgetTypeDTO.setFee(BigDecimal.valueOf(0.30));
         budgetTypeDTO.setDescription("Tradução oficial com validade legal");
         budgetTypeDTO.setTargetEmail("contato@empresa.com");
@@ -62,7 +63,7 @@ class BudgetTypeControllerTest {
         BudgetTypeDTO budgetType2 = new BudgetTypeDTO();
         budgetType2.setId(UUID.randomUUID());
         budgetType2.setBudgetTypeName("Tradução Técnica");
-        budgetType2.setBillingMethod("PAGE");
+        budgetType2.setBillingMethod(BillingMethod.PAGE);
         budgetType2.setFee(BigDecimal.valueOf(15.0));
         budgetType2.setDescription("Tradução de documentos técnicos");
         budgetType2.setTargetEmail("tecnica@empresa.com");
@@ -150,7 +151,7 @@ class BudgetTypeControllerTest {
         // Given
         BudgetTypeDTO inputDTO = new BudgetTypeDTO();
         inputDTO.setBudgetTypeName("Nova Tradução");
-        inputDTO.setBillingMethod("PARAGRAPH");
+        inputDTO.setBillingMethod(BillingMethod.PARAGRAPH);
         inputDTO.setFee(BigDecimal.valueOf(5.0));
         inputDTO.setDescription("Descrição teste");
         inputDTO.setTargetEmail("novo@empresa.com");
@@ -158,7 +159,7 @@ class BudgetTypeControllerTest {
         BudgetTypeDTO createdDTO = new BudgetTypeDTO();
         createdDTO.setId(UUID.randomUUID());
         createdDTO.setBudgetTypeName("Nova Tradução");
-        createdDTO.setBillingMethod("PARAGRAPH");
+        createdDTO.setBillingMethod(BillingMethod.PARAGRAPH);
         createdDTO.setFee(BigDecimal.valueOf(5.0));
         createdDTO.setDescription("Descrição teste");
         createdDTO.setTargetEmail("novo@empresa.com");
@@ -202,7 +203,7 @@ class BudgetTypeControllerTest {
         // Given
         BudgetTypeDTO invalidDTO = new BudgetTypeDTO();
         invalidDTO.setBudgetTypeName("Teste");
-        invalidDTO.setBillingMethod("WORD");
+        invalidDTO.setBillingMethod(BillingMethod.WORD);
         invalidDTO.setFee(BigDecimal.valueOf(0.25));
         invalidDTO.setDescription("Descrição");
         invalidDTO.setTargetEmail("email-invalido"); // ← Email inválido
@@ -223,7 +224,7 @@ class BudgetTypeControllerTest {
         // Given
         BudgetTypeDTO updateDTO = new BudgetTypeDTO();
         updateDTO.setBudgetTypeName("Tradução Juramentada Atualizada");
-        updateDTO.setBillingMethod("PAGE");
+        updateDTO.setBillingMethod(BillingMethod.PAGE);
         updateDTO.setFee(BigDecimal.valueOf(20.0));
         updateDTO.setDescription("Nova descrição");
         updateDTO.setTargetEmail("atualizado@empresa.com");
@@ -231,7 +232,7 @@ class BudgetTypeControllerTest {
         BudgetTypeDTO updatedDTO = new BudgetTypeDTO();
         updatedDTO.setId(budgetTypeId);
         updatedDTO.setBudgetTypeName("Tradução Juramentada Atualizada");
-        updatedDTO.setBillingMethod("PAGE");
+        updatedDTO.setBillingMethod(BillingMethod.PAGE);
         updatedDTO.setFee(BigDecimal.valueOf(20.0));
         updatedDTO.setDescription("Nova descrição");
         updatedDTO.setTargetEmail("atualizado@empresa.com");
@@ -258,7 +259,7 @@ class BudgetTypeControllerTest {
         // Given
         BudgetTypeDTO updateDTO = new BudgetTypeDTO();
         updateDTO.setBudgetTypeName("Teste");
-        updateDTO.setBillingMethod("WORD");
+        updateDTO.setBillingMethod(BillingMethod.WORD);
         updateDTO.setFee(BigDecimal.valueOf(0.25));
         updateDTO.setDescription("Descrição");
         updateDTO.setTargetEmail("teste@empresa.com");

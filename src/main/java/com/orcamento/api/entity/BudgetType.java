@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
+import com.orcamento.api.entity.enums.BillingMethod;
 
 @Entity
 @Table(name = "budget_types")
@@ -21,8 +22,9 @@ public class BudgetType {
     @Column(name = "budget_type_name", nullable = false, length = 100)
     private String budgetTypeName;
 
-    @Column(name = "billing_method", nullable = false, length = 10)
-    private String billingMethod;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "billing_method", nullable = false, length = 30)
+    private BillingMethod billingMethod;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal fee;
@@ -47,7 +49,7 @@ public class BudgetType {
     public BudgetType() {
     }
 
-    public BudgetType(UUID id, String budgetTypeName, String billingMethod, BigDecimal fee,
+    public BudgetType(UUID id, String budgetTypeName, BillingMethod billingMethod, BigDecimal fee,
             String description, String targetEmail, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime deletedAt) {
         this.id = id;
         this.budgetTypeName = budgetTypeName;
@@ -60,10 +62,10 @@ public class BudgetType {
         this.deletedAt = deletedAt;
     }
 
-    public String getBillingMethod() {
+    public BillingMethod getBillingMethod() {
         return billingMethod;
     }
-    public void setBillingMethod(String billingMethod) {
+    public void setBillingMethod(BillingMethod billingMethod) {
         this.billingMethod = billingMethod;
     }
 

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import com.orcamento.api.entity.enums.BillingMethod;
 
 public class BudgetTypeDTO {
 
@@ -19,7 +20,7 @@ public class BudgetTypeDTO {
     @NotBlank(message = "O método de faturamento é obrigatório.")
     @Size(max = 10, message = "O método de faturamento pode ter até 10 caracteres.")
     @Schema(description = "Método de faturamento (ex: 'WORD', 'PAGE')", example = "WORD")
-    private String billingMethod;
+    private BillingMethod billingMethod;
 
     @NotNull(message = "A taxa é obrigatória.")
     @DecimalMin(value = "0.0", inclusive = true, message = "A taxa deve ser positiva.")
@@ -45,7 +46,7 @@ public class BudgetTypeDTO {
     public BudgetTypeDTO() {
     }
 
-    public BudgetTypeDTO(UUID id, String budgetTypeName, String billingMethod, BigDecimal fee,
+    public BudgetTypeDTO(UUID id, String budgetTypeName, BillingMethod billingMethod, BigDecimal fee,
             String description, String targetEmail, OffsetDateTime createdAt, OffsetDateTime updatedAt,
             OffsetDateTime deletedAt) {
         this.id = id;
@@ -75,11 +76,11 @@ public class BudgetTypeDTO {
         this.budgetTypeName = budgetTypeName;
     }
 
-    public String getBillingMethod() {
+    public BillingMethod getBillingMethod() {
         return billingMethod;
     }
 
-    public void setBillingMethod(String billingMethod) {
+    public void setBillingMethod(BillingMethod billingMethod) {
         this.billingMethod = billingMethod;
     }
 
