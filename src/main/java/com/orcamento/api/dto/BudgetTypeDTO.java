@@ -17,8 +17,7 @@ public class BudgetTypeDTO {
     @Schema(description = "Nome descritivo do tipo de orçamento", example = "Tradução Juramentada")
     private String budgetTypeName;
 
-    @NotBlank(message = "O método de faturamento é obrigatório.")
-    @Size(max = 10, message = "O método de faturamento pode ter até 10 caracteres.")
+    @NotNull(message = "O método de faturamento é obrigatório.")
     @Schema(description = "Método de faturamento (ex: 'WORD', 'PAGE')", example = "WORD")
     private BillingMethod billingMethod;
 

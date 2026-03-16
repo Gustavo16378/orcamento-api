@@ -3,24 +3,28 @@ package com.orcamento.api.dto;
 import java.util.UUID;
 
 public class NotificationEventDTO {
+
     private UUID externalReferenceId;
     private String recipientEmail;
     private String recipientName;
     private String subject;
     private String bodyHtml;
-    
+    private String templateType; // NOVO CAMPO
+
     public NotificationEventDTO() {
     }
 
     public NotificationEventDTO(UUID externalReferenceId, String recipientEmail, String recipientName, String subject,
-            String bodyHtml) {
+            String bodyHtml, String templateType) {
         this.externalReferenceId = externalReferenceId;
         this.recipientEmail = recipientEmail;
         this.recipientName = recipientName;
         this.subject = subject;
         this.bodyHtml = bodyHtml;
+        this.templateType = templateType;
     }
 
+    // Getters e setters abaixo
     public UUID getExternalReferenceId() {
         return externalReferenceId;
     }
@@ -61,5 +65,11 @@ public class NotificationEventDTO {
         this.bodyHtml = bodyHtml;
     }
 
+    public String getTemplateType() {
+        return templateType;
+    }
 
+    public void setTemplateType(String templateType) {
+        this.templateType = templateType;
+    }
 }

@@ -32,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.orcamento.api.extension.MemoryMonitorExtension;
+import com.orcamento.api.messaging.NotificationProducerService;
 import com.orcamento.api.entity.enums.QuoteStatus;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +47,9 @@ class QuoteRequestServiceTest {
     @Mock
     private BudgetTypeRepository budgetTypeRepository;
 
+    @Mock
+    private NotificationProducerService notificationProducerService;
+    
     @InjectMocks
     private QuoteRequestService service;
 

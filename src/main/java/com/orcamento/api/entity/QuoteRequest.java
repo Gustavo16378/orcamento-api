@@ -8,7 +8,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
-import com.orcamento.api.entity.enums.BillingMethod;
 import com.orcamento.api.entity.enums.QuoteStatus;
 
 @Entity
@@ -55,7 +54,7 @@ public class QuoteRequest {
     private BigDecimal estimatedTotal;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "quote_status")
+    @Column(name = "status", nullable = false)
     private QuoteStatus status;
 
     @CreationTimestamp
