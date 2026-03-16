@@ -130,27 +130,33 @@ public class QuoteRequestService {
         QuoteRequest saved = quoteRequestRepository.save(entity);
         QuoteRequestDTO savedDTO = toDTO(saved);
 
-        // Monta o BODY HTML via template externo DO CLASSPATH!
+        // Utilize o nome do template (pode virar constante/enum)
+        String templateType = "ORCAMENTO_CRIADO";
+        String templateFile = "templates/orcamento_criado.html";
+
         String templateHtml;
         String bodyHtml;
         try {
-            templateHtml = TemplateUtils.loadTemplateFromClasspath("templates/orcamento_criado.html");
+            templateHtml = TemplateUtils.loadTemplateFromClasspath(templateFile);
             bodyHtml = TemplateUtils.processTemplate(
                     templateHtml,
                     savedDTO.getRequesterName(),
                     budgetType.getBudgetTypeName(),
-                    savedDTO.getId().toString());
+                    savedDTO.getId().toString()
+            );
         } catch (IOException e) {
-            // Fallback em caso de erro – recomenda-se logar o erro!
             bodyHtml = "<h1>Olá, " + savedDTO.getRequesterName() + "!</h1><p>Seu orçamento foi criado com sucesso!</p>";
         }
 
+        // Agora inclui o templateType!
         NotificationEventDTO event = new NotificationEventDTO(
                 savedDTO.getId(),
                 savedDTO.getRequesterEmail(),
                 savedDTO.getRequesterName(),
                 "Seu orçamento foi criado!",
-                bodyHtml);
+                bodyHtml,
+                templateType // novo campo
+        );
         notificationProducerService.sendNotification(event);
 
         return savedDTO;

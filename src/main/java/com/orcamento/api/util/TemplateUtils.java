@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 
 public class TemplateUtils {
 
-    // Lê o arquivo do classpath (src/main/resources)
     public static String loadTemplateFromClasspath(String resourcePath) throws IOException {
         try (InputStream is = TemplateUtils.class.getClassLoader().getResourceAsStream(resourcePath)) {
             if (is == null) {
@@ -16,10 +15,10 @@ public class TemplateUtils {
         }
     }
 
-    public static String processTemplate(String template, String nomeCliente, String tipoOrcamento, String idOrcamento) {
-        return template
-                .replace("{{NOME_CLIENTE}}", nomeCliente)
-                .replace("{{TIPO_ORCAMENTO}}", tipoOrcamento)
-                .replace("{{ID_ORCAMENTO}}", idOrcamento);
-    }
+    public static String processTemplate(String template, String nome, String tipo, String id) {
+    return template
+        .replace("{{nome}}", nome)
+        .replace("{{budget_type}}", tipo)
+        .replace("{{orcamento_id}}", id);
+}
 }

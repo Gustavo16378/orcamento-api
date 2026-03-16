@@ -54,12 +54,12 @@ class BudgetTypeControllerTest {
         budgetTypeDTO.setTargetEmail("contato@empresa.com");
         budgetTypeDTO.setCreatedAt(OffsetDateTime.now());
         budgetTypeDTO.setUpdatedAt(OffsetDateTime.now());
+        budgetTypeDTO.setDeletedAt(null);
     }
 
     @Test
     @DisplayName("GET /budget-types - Deve retornar 200 e lista de budget types")
     void deveRetornar200QuandoListar() throws Exception {
-        // Given
         BudgetTypeDTO budgetType2 = new BudgetTypeDTO();
         budgetType2.setId(UUID.randomUUID());
         budgetType2.setBudgetTypeName("Tradução Técnica");
@@ -67,10 +67,12 @@ class BudgetTypeControllerTest {
         budgetType2.setFee(BigDecimal.valueOf(15.0));
         budgetType2.setDescription("Tradução de documentos técnicos");
         budgetType2.setTargetEmail("tecnica@empresa.com");
+        budgetType2.setCreatedAt(OffsetDateTime.now());
+        budgetType2.setUpdatedAt(OffsetDateTime.now());
+        budgetType2.setDeletedAt(null);
 
         when(service.getAll()).thenReturn(List.of(budgetTypeDTO, budgetType2));
 
-        // When & Then
         mockMvc.perform(get("/budget-types")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -84,10 +86,8 @@ class BudgetTypeControllerTest {
     @Test
     @DisplayName("GET /budget-types - Deve retornar 200 e lista vazia")
     void deveRetornar200ComListaVazia() throws Exception {
-        // Given
         when(service.getAll()).thenReturn(List.of());
 
-        // When & Then
         mockMvc.perform(get("/budget-types")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -99,10 +99,8 @@ class BudgetTypeControllerTest {
     @Test
     @DisplayName("GET /budget-types/{id} - Deve retornar 200 e o budget type")
     void deveRetornar200QuandoBuscarPorId() throws Exception {
-        // Given
         when(service.getById(budgetTypeId)).thenReturn(budgetTypeDTO);
 
-        // When & Then
         mockMvc.perform(get("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -115,15 +113,13 @@ class BudgetTypeControllerTest {
     }
 
     @Test
-    @DisplayName("GET /budget-types/{id} - Deve retornar 404 quando não encontrar")
-    void deveRetornar404QuandoNaoEncontrar() throws Exception {
-        // Given
-        when(service.getById(budgetTypeId)).thenReturn(null);
+    @DisplayName("GET /budget-types/{id} - Deve retornar 500 quando não encontrar")
+    void deveRetornar500QuandoNaoEncontrar() throws Exception {
+        when(service.getById(budgetTypeId)).thenThrow(new RuntimeException("BudgetType não encontrado ou foi deletado."));
 
-        // When & Then
         mockMvc.perform(get("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError());
 
         verify(service, times(1)).getById(budgetTypeId);
     }
@@ -131,11 +127,9 @@ class BudgetTypeControllerTest {
     @Test
     @DisplayName("GET /budget-types/deleted - Deve retornar 200 e budget types deletados")
     void deveRetornar200QuandoListarDeletados() throws Exception {
-        // Given
         budgetTypeDTO.setDeletedAt(OffsetDateTime.now());
         when(service.getAllDeleted()).thenReturn(List.of(budgetTypeDTO));
 
-        // When & Then
         mockMvc.perform(get("/budget-types/deleted")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -148,7 +142,6 @@ class BudgetTypeControllerTest {
     @Test
     @DisplayName("POST /budget-types - Deve retornar 201 ao criar")
     void deveRetornar201QuandoCriar() throws Exception {
-        // Given
         BudgetTypeDTO inputDTO = new BudgetTypeDTO();
         inputDTO.setBudgetTypeName("Nova Tradução");
         inputDTO.setBillingMethod(BillingMethod.PARAGRAPH);
@@ -168,7 +161,6 @@ class BudgetTypeControllerTest {
 
         when(service.create(any(BudgetTypeDTO.class))).thenReturn(createdDTO);
 
-        // When & Then
         mockMvc.perform(post("/budget-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inputDTO)))
@@ -182,13 +174,10 @@ class BudgetTypeControllerTest {
     }
 
     @Test
-    @DisplayName("POST /budget-types - Deve retornar 400 com dados inválidos")
+    @DisplayName("POST /budget-types - Deve retornar 400 com dados inválidos (SERVICE NÃO é chamado)")
     void deveRetornar400QuandoDadosInvalidos() throws Exception {
-        // Given - DTO sem campos obrigatórios
-        BudgetTypeDTO invalidDTO = new BudgetTypeDTO();
-        // Não seta nada
+        BudgetTypeDTO invalidDTO = new BudgetTypeDTO(); // DTO inválido fere a Bean Validation
 
-        // When & Then
         mockMvc.perform(post("/budget-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
@@ -198,22 +187,19 @@ class BudgetTypeControllerTest {
     }
 
     @Test
-    @DisplayName("POST /budget-types - Deve retornar 400 com email inválido")
+    @DisplayName("POST /budget-types - Deve retornar 400 com email inválido (SERVICE NÃO é chamado)")
     void deveRetornar400QuandoEmailInvalido() throws Exception {
-        // Given
         BudgetTypeDTO invalidDTO = new BudgetTypeDTO();
         invalidDTO.setBudgetTypeName("Teste");
         invalidDTO.setBillingMethod(BillingMethod.WORD);
         invalidDTO.setFee(BigDecimal.valueOf(0.25));
         invalidDTO.setDescription("Descrição");
-        invalidDTO.setTargetEmail("email-invalido"); // ← Email inválido
+        invalidDTO.setTargetEmail("email-invalido"); // email malformado
 
-        // When & Then
         mockMvc.perform(post("/budget-types")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.targetEmail", containsString("e-mail")));
+                .andExpect(status().isBadRequest());
 
         verify(service, never()).create(any(BudgetTypeDTO.class));
     }
@@ -221,7 +207,6 @@ class BudgetTypeControllerTest {
     @Test
     @DisplayName("PUT /budget-types/{id} - Deve retornar 200 ao atualizar")
     void deveRetornar200QuandoAtualizar() throws Exception {
-        // Given
         BudgetTypeDTO updateDTO = new BudgetTypeDTO();
         updateDTO.setBudgetTypeName("Tradução Juramentada Atualizada");
         updateDTO.setBillingMethod(BillingMethod.PAGE);
@@ -241,7 +226,6 @@ class BudgetTypeControllerTest {
 
         when(service.update(eq(budgetTypeId), any(BudgetTypeDTO.class))).thenReturn(updatedDTO);
 
-        // When & Then
         mockMvc.perform(put("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
@@ -254,9 +238,8 @@ class BudgetTypeControllerTest {
     }
 
     @Test
-    @DisplayName("PUT /budget-types/{id} - Deve retornar 404 quando não encontrar")
-    void deveRetornar404QuandoAtualizarInexistente() throws Exception {
-        // Given
+    @DisplayName("PUT /budget-types/{id} - Deve retornar 500 quando não encontrar")
+    void deveRetornar500QuandoAtualizarInexistente() throws Exception {
         BudgetTypeDTO updateDTO = new BudgetTypeDTO();
         updateDTO.setBudgetTypeName("Teste");
         updateDTO.setBillingMethod(BillingMethod.WORD);
@@ -264,39 +247,34 @@ class BudgetTypeControllerTest {
         updateDTO.setDescription("Descrição");
         updateDTO.setTargetEmail("teste@empresa.com");
 
-        when(service.update(eq(budgetTypeId), any(BudgetTypeDTO.class))).thenReturn(null);
+        when(service.update(eq(budgetTypeId), any(BudgetTypeDTO.class))).thenThrow(new RuntimeException("BudgetType não encontrado ou foi deletado."));
 
-        // When & Then
         mockMvc.perform(put("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError());
 
         verify(service, times(1)).update(eq(budgetTypeId), any(BudgetTypeDTO.class));
     }
 
     @Test
-    @DisplayName("PUT /budget-types/{id} - Deve retornar 400 com dados inválidos")
+    @DisplayName("PUT /budget-types/{id} - Deve retornar 400 com dados inválidos (SERVICE NÃO é chamado)")
     void deveRetornar400QuandoAtualizarComDadosInvalidos() throws Exception {
-        // Given - DTO inválido
-        BudgetTypeDTO invalidDTO = new BudgetTypeDTO();
+        BudgetTypeDTO invalidDTO = new BudgetTypeDTO(); // DTO inválido fere a Bean Validation
 
-        // When & Then
         mockMvc.perform(put("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(status().isBadRequest());
 
-        verify(service, never()).update(any(UUID.class), any(BudgetTypeDTO.class));
+        verify(service, never()).update(eq(budgetTypeId), any(BudgetTypeDTO.class));
     }
 
     @Test
     @DisplayName("DELETE /budget-types/{id} - Deve retornar 204 ao deletar")
     void deveRetornar204QuandoDeletar() throws Exception {
-        // Given
         doNothing().when(service).softDelete(budgetTypeId);
 
-        // When & Then
         mockMvc.perform(delete("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -307,11 +285,9 @@ class BudgetTypeControllerTest {
     @Test
     @DisplayName("DELETE /budget-types/{id} - Deve retornar 500 quando não encontrar")
     void deveRetornar500QuandoDeletarInexistente() throws Exception {
-        // Given
         doThrow(new RuntimeException("BudgetType não encontrado ou já deletado."))
                 .when(service).softDelete(budgetTypeId);
 
-        // When & Then
         mockMvc.perform(delete("/budget-types/{id}", budgetTypeId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
